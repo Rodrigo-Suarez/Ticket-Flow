@@ -1,0 +1,6 @@
+cryptography==44.0.0
+fastapi==0.115.6
+PyMySQL==1.1.1
+python-dotenv==1.0.1
+qrcode==8.0
+SQLAlchemy==2.0.36

@@ -1,12 +1,19 @@
-from sqlalchemy import TIMESTAMP, Integer, Column, String, Enum, func
-from src.database.db import Base
+from pydantic import BaseModel, EmailStr, Field
+from datetime import datetime
+from typing import Literal
 
-class User(Base):
-    __tablename__ = "user"
+class UserCreate(BaseModel):
+    name: str = Field(max_length=50, min_length=1)
+    email: EmailStr
+    password: str = Field(min_length=8)
+    role: Literal["administrador", "asistente"]
 
-    user_id = Column(Integer, primary_key=True, autoincrement=True)  
-    name = Column(String(50), nullable=False)  
-    email = Column(String(50), nullable=False, unique=True)
-    password = Column(String(100), nullable=False)  
-    role = Column(Enum("administrador", "asistente"), nullable=False)  
-    creation_date = Column(TIMESTAMP, default=func.now()) 
+class UserResponse(BaseModel):
+    user_id: int
+    name: str
+    email: EmailStr
+    role: str
+    creation_date: datetime
+
+    class Config:
+        from_attributes = True
