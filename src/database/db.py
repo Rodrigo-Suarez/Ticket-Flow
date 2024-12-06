@@ -7,7 +7,7 @@ from src.config import db_user, db_password, db_host, db_name
 engine = create_engine(f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}', echo=True)
 
 #Definir la base de datos ORM
-base = declarative_base()
+Base = declarative_base()
 
 #Crear la sesion
 Session = sessionmaker(bind=engine)
