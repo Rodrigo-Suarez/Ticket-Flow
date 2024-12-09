@@ -6,6 +6,10 @@ from src.models.user import GetUser
 from src.database.models.user import User
 from src.database.db import get_db
 from passlib.context import CryptContext
+from jose import jwt, JWTError
+from datetime import timedelta, datetime
+from typing import Union
+from src.config import ALGORITHM, SECRET_KEY
 
 router = APIRouter()
 
@@ -37,19 +41,30 @@ def authenticate_user(username, password, db: Session): #Obtiene el usuario y ve
         print("Contraseña incorrecta")
         raise HTTPException(status_code=401, detail="No se pudo autenticar", headers={"WWW-Authenticate": "Bearer"})
     return user
+
+def get_jwt(data: dict, expires_token: Union[datetime, None] = None):
+    data_copy = data.copy()
+    if expires_token is None:
+        expires = datetime.now() + timedelta(minutes=30)
+    else:
+        expires = datetime.now() + expires_token
+    data_copy.update({"exp": expires})
+    token = jwt.encode(data_copy, key=SECRET_KEY, algorithm=ALGORITHM)
+    return token
+
     
 
 @router.post("/login", tags=["Login"], status_code=200, response_description="Acceso permitido")
 def login(token: str = Depends(oauth2_schema)):
-    print(token) 
-    return "hi"
+    return token
 
 
 @router.post("/token", tags=["Login"])
 def token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(form_data.username, form_data.password, db)
-    
+    access_token_expires = timedelta(hours=1)
+    access_token_jwt = get_jwt({"sub": user.username}, access_token_expires)
     return {
-        "access_token": user.username,
+        "access_token": access_token_jwt,
         "token_type": "bearer"
     }
