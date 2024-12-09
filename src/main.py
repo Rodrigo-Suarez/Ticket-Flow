@@ -23,4 +23,4 @@ async def httt_error_handler(request: Request, call_next):
         return await call_next(request)
     
     except Exception as e:
-        return HTTPException(status_code=500, detail={f"error: {e}"})
+        raise HTTPException(status_code=500, detail={f"error: {e}"})

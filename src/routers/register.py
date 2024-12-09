@@ -4,10 +4,17 @@ from src.models.user import UserCreate, UserResponse
 from src.database.models.user import User
 from src.database.db import get_db
 from sqlalchemy.orm import Session
+import bcrypt
 
 router = APIRouter()
 
-@router.post("/register", tags=["Register"], status_code=201, response_description="Usuario creado exitosamente")#, response_model=UserResponse)
+def hash_password(password: str):
+    salt = bcrypt.gensalt(rounds=12)
+    hashed = bcrypt.hashpw(password.encode(), salt)
+    return hashed.decode()
+
+
+@router.post("/register", tags=["Register"], status_code=201, response_description="Usuario creado exitosamente", response_model=UserResponse)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     email_validator = db.query(User).filter(User.email == user.email).first() #Busca si existe un usuario con el gmail ingresado y lo devuelve
     if email_validator: #Si existe un usuario con ese gmail, lanza una exepcioón, si no continua
@@ -15,9 +22,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     
     #Se crea una nueva variable con los datos para no perder los datos originales. Ademas permite hacer modificaciones en los mismos, como hashear la contraseña
     new_user = User(
-        name = user.name,
+        username = user.username,
         email = user.email,
-        password=user.password+"false_hash",
+        password=hash_password(user.password),
         role=user.role
     )
 

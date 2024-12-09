@@ -4,3 +4,7 @@ PyMySQL==1.1.1
 python-dotenv==1.0.1
 qrcode==8.0
 SQLAlchemy==2.0.36
+python-multipart==0.0.19
+python-jose==3.3.0
+PyMySQL==1.1.1
+autopep8==2.3.1
