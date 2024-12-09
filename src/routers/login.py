@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.exceptions import HTTPException
-from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
-from src.models.user import GetUser, UserResponse
+from src.models.user import UserCreate, UserResponse
 from src.database.models.user import User
 from src.database.db import get_db
 from passlib.context import CryptContext
@@ -32,12 +31,14 @@ def get_user_db(username, db: Session):
     return []
 
 
-def get_user(username, db: Session) -> GetUser: #Obtiene el usuario de la base de datos y lo transforma en un modelo pydantic
+def get_user(username, db: Session) -> UserCreate: #Obtiene el usuario de la base de datos y lo transforma en un modelo pydantic
     user = db.query(User).filter(User.username == username).first()
     if user:
-        return GetUser(
+        return UserCreate(
             username = user.username,
             password = user.password,
+            role = user.role,
+            email = user.email
         )
     return []
 
@@ -87,17 +88,27 @@ def authenticate_token(token: str = Depends(oauth2_schema), db: Session = Depend
     return user
 
 
+def verify_admin(user: UserResponse = Depends(authenticate_token)) -> UserResponse:
+    if user.role == "administrador":
+        return user
+    raise HTTPException(status_code=403, detail="No tienes permiso para acceder")
+
+
 @router.post("/login", tags=["Login"], status_code=200, response_description="Acceso permitido")
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(form_data.username, form_data.password, db)
     access_token_expires = timedelta(hours=20)
-    access_token_jwt = get_jwt({"sub": user.username}, access_token_expires)
+    access_token_jwt = get_jwt({"sub": user.username, "role": user.role}, access_token_expires)
     return {
         "access_token": access_token_jwt,
         "token_type": "bearer"
     }
-    
+
 
 @router.get("/users/me", tags=["User"])
-def get_users_me(user: UserResponse = Depends(authenticate_token)) -> UserResponse:
+async def get_users_me(user: UserResponse = Depends(authenticate_token)) -> UserResponse:
+    return user
+
+@router.get("/test", tags=["User"])
+async def test(user: UserResponse = Depends(verify_admin)) -> UserResponse:
     return user
