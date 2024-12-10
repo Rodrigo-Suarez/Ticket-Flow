@@ -18,10 +18,14 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         "token_type": "bearer"
     }
 
-@router.get("/users/me", tags=["User"])
+########################################################
+##  Revisar este endpoint cuando termine el proyecto  ##
+##  Features en mente:                                ##-------------
+##   - Mostrar las entradas del usuario               ##            |
+##   - Mostras los eventos del usuario(si es admin)   ##           \|/
+########################################################            °
+                                                                
+@router.get("/users/me", tags=["User"])                         
 async def get_users_me(user: UserResponse = Depends(authenticate_token)) -> UserResponse:
     return user
 
-@router.get("/test", tags=["User"])
-async def test(user: UserResponse = Depends(verify_admin)) -> UserResponse:
-    return user
