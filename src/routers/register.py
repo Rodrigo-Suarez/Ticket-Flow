@@ -25,12 +25,12 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         password=hash_password(user.password),
         role=user.role
     )
-
+    
     db.add(new_user)
     db.commit()
     db.refresh(new_user) #Sincroniza la informacion entre la API y la Base de Datos
 
-    return  new_user
+    return  UserResponse.model_validate(new_user)
 
 
 
