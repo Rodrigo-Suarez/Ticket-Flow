@@ -4,7 +4,7 @@ from src.models.user import UserCreate, UserResponse
 from src.database.models.user import User
 from src.database.db import get_db
 from sqlalchemy.orm import Session
-from src.routers.login import pwd_context
+from src.dependencies.auth import pwd_context
 
 router = APIRouter()
 
