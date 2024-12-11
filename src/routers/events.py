@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, Query
 from fastapi.exceptions import HTTPException
-from src.dependencies.auth import verify_admin, authenticate_token
+from fastapi.responses import JSONResponse
+from src.dependencies.auth import verify_admin
+from src.dependencies.event import get_event_by_id
 from src.models.user import UserResponse
 from src.models.event import CreateEvent, EventResponse, EventAdminResponse, GetEvents, UpdateEvent
 from src.database.models.event import Event
@@ -45,6 +47,7 @@ def get_event(
         events= events_list
     )
 
+
 @router.post("/create", status_code=201, response_description="Evento creado exitosamente", response_model=EventAdminResponse)
 def post_event(event: CreateEvent, admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)):
     new_event = Event(
@@ -65,28 +68,30 @@ def post_event(event: CreateEvent, admin: UserResponse = Depends(verify_admin), 
     db.commit()
     db.refresh(new_event)
     
-    return new_event
+    return EventAdminResponse.model_validate(new_event) 
 
 
 
-@router.put("/", status_code=200, response_description="Evento modificado exitosamente")
-def put_event(changed_event: UpdateEvent, id: int = Query(ge=1), admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)):
-    event = db.query(Event).filter(Event.event_id == id).first()
-    if not event:
-        raise HTTPException(status_code=404, detail="No se encontro ningun evento")
-
-    if not event.administrador.user_id == admin.user_id:
-        raise HTTPException(status_code=403, detail="No tienes permiso para acceder")
+@router.put("/", status_code=200, response_description="Evento modificado exitosamente", response_model=EventResponse)
+def put_event(changed_event: UpdateEvent, id: int = Query(ge=1), admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)) -> EventResponse:
+    event = get_event_by_id(id, admin, db)
 
     to_update = changed_event.model_dump(exclude_unset=True) #Convierte el objeto event en un diccionario excluyendo los campos no definidos
-    for key, value in to_update.items():
-        setattr(event, key, value)
+    for key, value in to_update.items(): #Convierte el diccionario en una lista con 2 elementos de la siguiente forma ["key", "value"]. Ej: ["title", "Duki: Tour por Buenos Aires"]
+        setattr(event, key, value) #Agarra el evento(event) y cambia el valor del campo(key) por el nuevo valor(value)
     
     db.commit()
     db.refresh(event)
+    
     return EventResponse.model_validate(event)
 
 
-@router.delete("/{id}", status_code=204, response_description="Evento eliminado correctamente")
-def delete_event(id: int, admin: UserResponse = Depends(verify_admin)):
-    pass
+@router.delete("/{id}", status_code=202, response_description="Evento eliminado correctamente")
+def delete_event(id: int, admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)) -> JSONResponse:
+    event = get_event_by_id(id, admin, db)
+    
+    db.delete(event)
+    db.commit()
+    
+    return JSONResponse(status_code=202, content="Evento eliminado correctamente")
+
