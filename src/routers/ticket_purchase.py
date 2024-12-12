@@ -24,6 +24,10 @@ def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse =
         qr_code = qr_data
     )
 
+    if event.avaiable_tickets == 0:
+        raise HTTPException(status_code=400, detail="No quedan entradas disponibles para el evento")
+
+    db.query(Event).filter(Event.event_id == id).update({Event.avaiable_tickets: Event.avaiable_tickets - 1})
     db.add(new_ticket)
     db.commit()
     db.refresh(new_ticket) #Sincroniza la informacion entre la API y la Base de Datos
