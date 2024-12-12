@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import RedirectResponse
 from src.database.models.event import Event
 from src.database.models.ticket import Ticket
 from sqlalchemy.orm import Session
 from src.dependencies.auth import authenticate_token
-from src.dependencies.ticket import get_qrcode
 from src.models.user import UserResponse
 from src.database.db import get_db
 from datetime import datetime
@@ -27,10 +27,11 @@ def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse =
     if event.avaiable_tickets == 0:
         raise HTTPException(status_code=400, detail="No quedan entradas disponibles para el evento")
 
-    db.query(Event).filter(Event.event_id == id).update({Event.avaiable_tickets: Event.avaiable_tickets - 1})
+    event.avaiable_tickets -= 1
+    
     db.add(new_ticket)
     db.commit()
     db.refresh(new_ticket) #Sincroniza la informacion entre la API y la Base de Datos
-
-    return get_qrcode(qr_data)
+    
+    return RedirectResponse(url=f"/ticket/{new_ticket.ticket_id}", status_code=303)
 

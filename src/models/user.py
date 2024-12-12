@@ -18,3 +18,15 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserDashboard(BaseModel):
+    username: str
+    email: str
+    role: Literal["administrador", "asistente"]
+    tickets: list
+    
+class UserAdminDashboard(BaseModel):
+    username: str
+    email: str
+    role: Literal["administrador", "asistente"]
+    events: list

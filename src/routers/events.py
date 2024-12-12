@@ -13,7 +13,7 @@ from src.database.db import get_db
 router = APIRouter(prefix="/events", tags=["Events"])
 
 @router.get("/", status_code=200, response_description="Respuesta exitosa", response_model= GetEvents)
-def get_events(
+def get_events_router(
     skip: int = Query(default=0, ge=0, description="Eventos a omitir"), 
     limit: int = Query(default=10, ge=1, le=20, description="Eventos por pagina"),  
     db: Session = Depends(get_db)
@@ -29,7 +29,7 @@ def get_events(
 
 
 @router.get("/search", status_code=200, response_description="Respuesta exitosa", response_model=GetEvents)
-def get_event(
+def get_event_router(
     name: str = Query(default="", min_length=0, description="Buscar: "),
     skip: int = Query(default=0, ge=0, description="Eventos a omitir"), 
     limit: int = Query(default=10, ge=1, le=20, description="Eventos por pagina"), 
@@ -47,9 +47,17 @@ def get_event(
         events= events_list
     )
 
+@router.get("/{id}", status_code=200, response_description="Usuario encontrado", response_model=EventResponse)
+def get_event_by_id(id: int, db:Session = Depends(get_db)) -> EventResponse:
+    event = db.query(Event).filter(Event.event_id == id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="No se encontro ningun evento")
+    
+    return EventResponse.model_validate(event)
+
 
 @router.post("/create", status_code=201, response_description="Evento creado exitosamente", response_model=EventAdminResponse)
-def post_event(event: CreateEvent, admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)):
+def post_event_router(event: CreateEvent, admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)):
     new_event = Event(
         title = event.title,
         description = event.description,
@@ -73,7 +81,7 @@ def post_event(event: CreateEvent, admin: UserResponse = Depends(verify_admin), 
 
 
 @router.put("/", status_code=200, response_description="Evento modificado exitosamente", response_model=EventResponse)
-def put_event(changed_event: UpdateEvent, id: int = Query(ge=1), admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)) -> EventResponse:
+def put_event_router(changed_event: UpdateEvent, id: int = Query(ge=1), admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)) -> EventResponse:
     event = get_event_by_id(id, admin, db)
 
     to_update = changed_event.model_dump(exclude_unset=True) #Convierte el objeto event en un diccionario excluyendo los campos no definidos
@@ -87,7 +95,7 @@ def put_event(changed_event: UpdateEvent, id: int = Query(ge=1), admin: UserResp
 
 
 @router.delete("/{id}", status_code=202, response_description="Evento eliminado correctamente")
-def delete_event(id: int, admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)) -> JSONResponse:
+def delete_event_router(id: int, admin: UserResponse = Depends(verify_admin), db: Session = Depends(get_db)) -> JSONResponse:
     event = get_event_by_id(id, admin, db)
     
     db.delete(event)

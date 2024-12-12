@@ -37,3 +37,7 @@ class GetEvents(BaseModel):
     total_events: int 
     showed_events: int            
     events: list  
+
+class AdminEvent(BaseModel):
+    event_id: int
+    event: str
