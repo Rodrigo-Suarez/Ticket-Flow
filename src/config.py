@@ -1,6 +1,7 @@
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+from fastapi_mail import ConnectionConfig
 
 load_dotenv()
 
@@ -14,3 +15,17 @@ db_name = os.getenv("DB_NAME")
 ALGORITHM= os.getenv("ALGORITHM")
 SECRET_KEY= os.getenv("SECRET_KEY")
 ACCESS_TOKEN_EXPIRES_MINUTES = timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRES_MINUTES")))
+
+#Configuracion email
+conf = ConnectionConfig(
+    MAIL_USERNAME=os.getenv("GMAIL_USERNAME"),
+    MAIL_PASSWORD=os.getenv("GMAIL_PASSWORD"),
+    MAIL_FROM=os.getenv("GMAIL_ADDRESS"),
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+)
+
+
+

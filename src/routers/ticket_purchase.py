@@ -33,5 +33,5 @@ def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse =
     db.commit()
     db.refresh(new_ticket) #Sincroniza la informacion entre la API y la Base de Datos
     
-    return RedirectResponse(url=f"/ticket/{new_ticket.ticket_id}", status_code=303)
+    return RedirectResponse(url=f"/ticket/{new_ticket.ticket_id}/send", status_code=307)
 
