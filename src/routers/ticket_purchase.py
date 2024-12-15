@@ -61,7 +61,7 @@ def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse =
         preference = preference_response["response"]
         
         # Regresar la URL para que el cliente haga el pago
-        return RedirectResponse(url=preference["init_point"], status_code=303)
+        return {"url": preference["init_point"]}
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=e)
