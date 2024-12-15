@@ -65,7 +65,8 @@ def post_event_router(event: CreateEvent, admin: UserResponse = Depends(verify_a
         date = event.date,
         time = event.time,
         avaiable_tickets = event.avaiable_tickets,
-        administrador_id = admin.user_id
+        administrador_id = admin.user_id,
+        price = event.price
     )
 
     try:

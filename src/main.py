@@ -3,7 +3,7 @@ from fastapi.responses import PlainTextResponse
 from fastapi.exceptions import HTTPException
 from src.routers import login, register, events, ticket_purchase, ticket_validation, ticket, ticket_mail
 
-app = FastAPI(title="Ticket Flow", version="Alpha")
+app = FastAPI(title="Ticket Flow", version="1.0.1")
 
 @app.get("/", tags= ["Home"], status_code=200, response_description="Respuesta exitosa")
 def home():

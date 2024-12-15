@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Column, String, Text, Date, Time, ForeignKey
+from sqlalchemy import Integer, Column, String, Text, Date, Time, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from src.database.db import Base
 
@@ -13,6 +13,7 @@ class Event(Base):
     time = Column(Time, nullable=False)
     avaiable_tickets = Column(Integer, nullable=False, default=0)
     administrador_id = Column(Integer,ForeignKey("user.user_id"))
-    
+    price = Column(Float, nullable=False, default=0)
+
     administrador = relationship("User", backref="events")
     

@@ -12,3 +12,8 @@ class UserTicket(BaseModel):
     event: str
 
 
+# Modelo para los datos de pago
+class PaymentRequest(BaseModel):
+    amount: float
+    description: str
+    email: str

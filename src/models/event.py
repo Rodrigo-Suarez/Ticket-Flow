@@ -9,6 +9,7 @@ class CreateEvent(BaseModel):
     date: Date
     time: Time
     avaiable_tickets: int = Field(default=0)
+    price: float = Field(default=0)
 
 class EventResponse(CreateEvent):
     class Config:
@@ -28,6 +29,7 @@ class UpdateEvent(BaseModel):
     date: Optional[Date] = None
     time: Optional[Time] = None
     avaiable_tickets: Optional[int] = None
+    price: float = Field(default=0)
 
     class Config:
         from_attributes = True
