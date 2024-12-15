@@ -2,8 +2,19 @@ from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from fastapi.exceptions import HTTPException
 from src.routers import login, register, events, ticket_purchase, ticket_validation, ticket, ticket_mail
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Ticket Flow", version="1.0.1")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permitir todos los orígenes (puedes limitarlo a dominios específicos)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permitir todos los encabezados
+)
+
+
 
 @app.get("/", tags= ["Home"], status_code=200, response_description="Respuesta exitosa")
 def home():

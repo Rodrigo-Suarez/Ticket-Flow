@@ -13,7 +13,7 @@ class Event(Base):
     time = Column(Time, nullable=False)
     avaiable_tickets = Column(Integer, nullable=False, default=0)
     administrador_id = Column(Integer,ForeignKey("user.user_id"))
-    price = Column(Float, nullable=False, default=0)
+    price = Column(Float, nullable=False, default=0.00)
 
     administrador = relationship("User", backref="events")
     

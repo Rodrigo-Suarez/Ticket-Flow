@@ -29,7 +29,7 @@ class UpdateEvent(BaseModel):
     date: Optional[Date] = None
     time: Optional[Time] = None
     avaiable_tickets: Optional[int] = None
-    price: float = Field(default=0)
+    price: float = Field(ge=0, default=0)
 
     class Config:
         from_attributes = True

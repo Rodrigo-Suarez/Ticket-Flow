@@ -27,5 +27,6 @@ conf = ConnectionConfig(
     MAIL_SSL_TLS=False,
 )
 
-
+#Configuración Mercado Pago
+prod_access_token = os.getenv("PROD_ACCESS_TOKEN")
 

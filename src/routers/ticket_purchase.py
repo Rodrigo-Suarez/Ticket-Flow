@@ -8,12 +8,13 @@ from src.dependencies.auth import authenticate_token
 from src.models.user import UserResponse
 from src.database.db import get_db
 from datetime import datetime
+from src.config import prod_access_token
 import mercadopago
 
 router = APIRouter(tags=["Ticket Purchase"])
 
 
-sdk = mercadopago.SDK("PROD_ACCESS_TOKEN")
+sdk = mercadopago.SDK(prod_access_token)
 
 
 @router.post("/events/{id}/tickets")
@@ -23,13 +24,14 @@ def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse =
         raise HTTPException(status_code=404, detail="No se encontro ningun evento")
     if event.avaiable_tickets == 0:
         raise HTTPException(status_code=400, detail="No quedan entradas disponibles para el evento")
-    print("evento obtenido")
+    if event.price == 0:
+        pass
+    
     payment = PaymentRequest(
         amount=event.price,
         description=event.title,
         email=user.email
     )
-    print("Payment creado")
     try:
         # Crear una preferencia de pago (MercadoPago)
         preference_data = {
@@ -47,29 +49,32 @@ def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse =
             },
 
             "back_urls": {
-                "success": "https://ticket-flow-s9wk.onrender.com/success",
+                "success": f"https://ticket-flow-s9wk.onrender.com/correct",
                 "failure": "https://ticket-flow-s9wk.onrender.com/failure",
-                "pending": "https://ticket-flow-s9wk.onrender.com/pending"
+                "pending": "https://ticket-flow-s9wk.onrender.com/failure"
             },
 
             "auto_return": "approved"
         }
-        print("Preference_data creado")
+
         preference_response = sdk.preference().create(preference_data)
-        print("Preference_response creado")
         preference = preference_response["response"]
-        print("Preference creado")
         
         # Regresar la URL para que el cliente haga el pago
-        return {"payment_url": preference["response"]["init_point"]}
+        return RedirectResponse(url=preference["init_point"], status_code=303)
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=e)
 
 
 
-    
-    
+@router.get("/correct")
+def correct():
+    return "compra exitosa"
+
+@router.get("/failure")
+def correct():
+    return "compra fallida"
 
 """
 qr_data = f"user_id = {user.user_id}, event_id = {event.event_id}, creation_date = {datetime.now()}"
