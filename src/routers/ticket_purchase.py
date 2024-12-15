@@ -16,7 +16,6 @@ router = APIRouter(tags=["Ticket Purchase"])
 sdk = mercadopago.SDK("PROD_ACCESS_TOKEN")
 
 
-
 @router.post("/events/{id}/tickets")
 def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse = Depends(authenticate_token)):
     event = db.query(Event).filter(Event.event_id == id).first()
@@ -24,18 +23,13 @@ def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse =
         raise HTTPException(status_code=404, detail="No se encontro ningun evento")
     if event.avaiable_tickets == 0:
         raise HTTPException(status_code=400, detail="No quedan entradas disponibles para el evento")
-    
+    print("evento obtenido")
     payment = PaymentRequest(
         amount=event.price,
         description=event.title,
         email=user.email
     )
-
-    return RedirectResponse(url=f"/events/tickets/create_payment/{payment}")
-
-
-@router.post("/events/tickets/create_payment/{payment}")
-async def create_payment(payment: PaymentRequest, user: UserResponse = Depends(authenticate_token)):
+    print("Payment creado")
     try:
         # Crear una preferencia de pago (MercadoPago)
         preference_data = {
@@ -60,15 +54,21 @@ async def create_payment(payment: PaymentRequest, user: UserResponse = Depends(a
 
             "auto_return": "approved"
         }
-        
+        print("Preference_data creado")
         preference_response = sdk.preference().create(preference_data)
+        print("Preference_response creado")
         preference = preference_response["response"]
+        print("Preference creado")
         
         # Regresar la URL para que el cliente haga el pago
         return {"payment_url": preference["response"]["init_point"]}
     
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=e)
+
+
+
+    
     
 
 """
