@@ -22,7 +22,6 @@ def check_password(plane_password, db_password): #Compara la contraseña de la b
 
 def authenticate_user(username, password, db: Session): #Obtiene el usuario y verifica si el nombre y contraseña son correctos
     user = get_user(username, db)
-    print(user)
     if not user:
         print("usuario no encontrado")
         raise HTTPException(status_code=401, detail="El ususario no existe", headers={"WWW-Authenticate": "Bearer"})
@@ -38,7 +37,6 @@ def get_jwt(data: dict, expires_token: Union[datetime, None] = None):
         expires = datetime.now() + timedelta(minutes=30)
     else:
         expires = datetime.now() + expires_token
-    print(expires)
     data_copy.update({"exp": expires.timestamp()})
     token = jwt.encode(data_copy, key=SECRET_KEY, algorithm=ALGORITHM)
     return token

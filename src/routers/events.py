@@ -48,7 +48,7 @@ def get_event_router(
     )
 
 @router.get("/{id}", status_code=200, response_description="Usuario encontrado", response_model=EventResponse)
-def get_event_by_id(id: int, db:Session = Depends(get_db)) -> EventResponse:
+def get_event_by_id_router(id: int, db:Session = Depends(get_db)) -> EventResponse:
     event = db.query(Event).filter(Event.event_id == id).first()
     if not event:
         raise HTTPException(status_code=404, detail="No se encontro ningun evento")
