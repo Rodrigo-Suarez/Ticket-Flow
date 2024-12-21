@@ -112,15 +112,3 @@ qr_data = f"user_id = {user.user_id}, event_id = {event.event_id}, creation_date
     return RedirectResponse(url=f"/ticket/{new_ticket.ticket_id}/send", status_code=307)
 """
 
-https://ticket-flow-s9wk.onrender.com/events/tickets/24/correct?
-collection_id=null
-&collection_status=null
-&payment_id=null
-&status=null
-&external_reference=null
-&payment_type=null
-&merchant_order_id=null
-&preference_id=1296207190-025c07cf-a4ff-4e5f-abe8-b0ca333a0045
-&site_id=MLA
-&processing_mode=aggregator
-&merchant_account_id=null
