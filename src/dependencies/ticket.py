@@ -32,6 +32,7 @@ def get_tickets(user: UserResponse, db: Session):
 
 
 def get_ticket(id: int, user: UserResponse, db: Session):
+    print(id)
     ticket = db.query(Ticket).filter(Ticket.ticket_id == id).first()
     if not ticket:
         raise HTTPException(status_code=404, detail="El ticket no existe")

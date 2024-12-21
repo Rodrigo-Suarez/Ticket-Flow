@@ -8,12 +8,12 @@ from src.dependencies.ticket import get_qr_upload_file, get_ticket
 from src.config import conf
 
 
-router = APIRouter(tags=["Mail"])
+#router = APIRouter(tags=["Mail"])
 
 fm = FastMail(conf)
 
-@router.post("/ticket/{id}/send", status_code=200, response_description="Correo enviado exitosamente")
-async def send_ticket(id: int, db:Session = Depends(get_db), user: UserResponse = Depends(authenticate_token)):
+#@router.post("/ticket/{id}/send", status_code=200, response_description="Correo enviado exitosamente")
+async def send_ticket(id: int, db:Session, user: UserResponse): #= Depends(get_db), user: UserResponse = Depends(authenticate_token)):
     ticket = get_ticket(id, user, db)
     qr_upload_file = get_qr_upload_file(ticket.qr_code)
 

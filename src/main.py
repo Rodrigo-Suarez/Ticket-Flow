@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from fastapi.exceptions import HTTPException
-from src.routers import login, register, events, ticket_purchase, ticket_validation, ticket, ticket_mail
+from src.routers import login, register, events, ticket_purchase, ticket_validation, ticket#, ticket_mail
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Ticket Flow", version="1.0.1")
@@ -27,7 +27,7 @@ app.include_router(events.router)
 app.include_router(ticket_purchase.router)
 app.include_router(ticket_validation.router)
 app.include_router(ticket.router)
-app.include_router(ticket_mail.router)
+#app.include_router(ticket_mail.router)
 
 
 @app.middleware("http")
