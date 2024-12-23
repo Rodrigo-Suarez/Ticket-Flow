@@ -38,7 +38,7 @@ class UpdateEvent(BaseModel):
 class GetEvents(BaseModel):
     total_events: int 
     showed_events: int            
-    events: list  
+    events: list 
 
 class AdminEvent(BaseModel):
     event_id: int

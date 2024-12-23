@@ -33,6 +33,7 @@ async def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResp
         description=event.title,
         email=user.email
     )
+    
     try:
         # Crear una preferencia de pago (MercadoPago)
         preference_data = {
@@ -50,12 +51,14 @@ async def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResp
             },
 
             "back_urls": {
-                "success": f"https://ticket-flow-s9wk.onrender.com/events/tickets/{event.event_id}/correct",
-                "failure": f"https://ticket-flow-s9wk.onrender.com/failure",
-                "pending": f"https://ticket-flow-s9wk.onrender.com/failure"
+                "success": "https://ticket-flow-s9wk.onrender.com/payment-success",
+                "failure": "https://ticket-flow-s9wk.onrender.com/payment-failure",
+                "pending": "https://ticket-flow-s9wk.onrender.com/payment-pending"
             },
 
-            "auto_return": "approved"
+            "auto_return": "approved",
+            "external_reference": f"{event.event_id}|{user.user_id}",
+            "notification_url": "https://tu-dominio.com/webhook/mercadopago"
         }
 
         preference_response = sdk.preference().create(preference_data)
@@ -69,46 +72,16 @@ async def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResp
 
 
 
-@router.get("/events/tickets/{id}/correct")
-async def correct(id:int, user: UserResponse = Depends(authenticate_token), db: Session = Depends(get_db)):
-    event = db.query(Event).filter(Event.event_id == id).first()
-    qr_data = f"user_id = {user.user_id}, event_id = {event.event_id}, creation_date = {datetime.now()}"
+@router.get("/payment-success")
+def payment_success():
+    return {"message": "¡Pago aprobado! Revisa tu correo para más detalles."}
 
-    new_ticket = Ticket(
-        user_id = user.user_id ,
-        event_id = event.event_id,
-        qr_code = qr_data
-    )
+@router.get("/payment-failure")
+def payment_failure():
+    return {"message": "Pago fallido. Por favor, inténtalo nuevamente."}
 
-    event.avaiable_tickets -= 1
-    
-    db.add(new_ticket)
-    db.commit()
-    db.refresh(new_ticket) #Sincroniza la informacion entre la API y la Base de Datos
+@router.get("/payment-pending")
+def payment_pending():
+    return {"message": "Tu pago está pendiente. Recibirás una confirmación cuando sea procesado."}
 
-    response = send_ticket(new_ticket.ticket_id, db, user)
-    return await response
-    #return RedirectResponse(url=f"/ticket/{new_ticket.ticket_id}/send", status_code=307)
-
-@router.get("/failure")
-def correct(user: UserResponse = Depends(authenticate_token)):
-    return "compra fallida"
-
-"""
-qr_data = f"user_id = {user.user_id}, event_id = {event.event_id}, creation_date = {datetime.now()}"
-
-    new_ticket = Ticket(
-        user_id = user.user_id ,
-        event_id = event.event_id,
-        qr_code = qr_data
-    )
-
-    event.avaiable_tickets -= 1
-    
-    db.add(new_ticket)
-    db.commit()
-    db.refresh(new_ticket) #Sincroniza la informacion entre la API y la Base de Datos
-
-    return RedirectResponse(url=f"/ticket/{new_ticket.ticket_id}/send", status_code=307)
-"""
 
