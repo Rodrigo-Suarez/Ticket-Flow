@@ -2,13 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from src.models.ticket import PaymentRequest
 from src.database.models.event import Event
-from src.database.models.ticket import Ticket
-from src.routers.ticket_mail import send_ticket
 from sqlalchemy.orm import Session
 from src.dependencies.auth import authenticate_token
 from src.models.user import UserResponse
 from src.database.db import get_db
-from datetime import datetime
 from src.config import prod_access_token
 import mercadopago
 
