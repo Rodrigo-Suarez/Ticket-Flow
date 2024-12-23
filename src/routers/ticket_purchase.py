@@ -1,19 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import RedirectResponse
+from src.dependencies.webhook import process_successful_payment
 from src.models.ticket import PaymentRequest
 from src.database.models.event import Event
 from sqlalchemy.orm import Session
 from src.dependencies.auth import authenticate_token
 from src.models.user import UserResponse
 from src.database.db import get_db
-from src.config import prod_access_token
-import mercadopago
+from src.routers.webhook import sdk
 
 router = APIRouter(tags=["Ticket Purchase"])
-
-
-sdk = mercadopago.SDK(prod_access_token)
-
 
 @router.post("/events/{id}/tickets")
 async def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResponse = Depends(authenticate_token)):
@@ -23,7 +18,7 @@ async def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResp
     if event.avaiable_tickets == 0:
         raise HTTPException(status_code=400, detail="No quedan entradas disponibles para el evento")
     if event.price == 0:
-        return RedirectResponse(url=f"/events/tickets/{event.event_id}/correct", status_code=303)
+        return process_successful_payment(event.event_id, user.user_id, db)
     
     payment = PaymentRequest(
         amount=event.price,
