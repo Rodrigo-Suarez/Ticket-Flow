@@ -43,14 +43,14 @@ async def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResp
             },
 
             "back_urls": {
-                "success": "https://ticket-flow-s9wk.onrender.com/payment-success",
-                "failure": "https://ticket-flow-s9wk.onrender.com/payment-failure",
-                "pending": "https://ticket-flow-s9wk.onrender.com/payment-pending"
+                "success": "https://tu-dominio/payment-success",
+                "failure": "https://tu-dominio/payment-failure",
+                "pending": "https://tu-dominio/payment-pending"
             },
 
             "auto_return": "approved",
             "external_reference": f"{event.event_id}|{user.user_id}",
-            "notification_url": "https://ticket-flow-s9wk.onrender.com/webhook/mercadopago"
+            "notification_url": "https://tu-dominio/webhook/mercadopago"
         }
 
         preference_response = sdk.preference().create(preference_data)

@@ -5,9 +5,6 @@ from sqlalchemy.orm import Session
 from src.dependencies.ticket import get_qr_upload_file, get_ticket
 from src.config import conf
 
-
-#router = APIRouter(tags=["Mail"])
-
 fm = FastMail(conf)
 
 async def send_ticket(id: int, db:Session, user):
@@ -41,7 +38,6 @@ async def send_ticket(id: int, db:Session, user):
     )
     try:
         await fm.send_message(message)
-        #return {"message": f"¡Gracias por su compra! Su ticket fue enviado a la direccion de correo electronico '{user.email}'"}
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"No se pudo enviar el correo: {e}")

@@ -1,4 +1,3 @@
-from src.models.user import UserResponse
 from src.database.models.user import User
 from src.database.models.event import Event
 from src.database.models.ticket import Ticket
@@ -10,13 +9,7 @@ from datetime import datetime
 
 async def process_successful_payment(event_id: int, user_id: int, db: Session):
     event = db.query(Event).filter(Event.event_id == event_id).first()
-    print("#############################################")
-    print(event)
-    print("#############################################")
     user = db.query(User).filter(User.user_id == user_id).first()
-    print("#############################################")
-    print(user)
-    print("#############################################")
     qr_data = f"user_id = {user.user_id}, event_id = {event.event_id}, creation_date = {datetime.now()}"
     
     new_ticket = Ticket(
@@ -32,5 +25,6 @@ async def process_successful_payment(event_id: int, user_id: int, db: Session):
     db.refresh(new_ticket) #Sincroniza la informacion entre la API y la Base de Datos
     
     await send_ticket(new_ticket.ticket_id, db, user)
+    
     
 

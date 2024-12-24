@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException
 from src.routers import login, register, events, ticket_purchase, ticket_validation, ticket, webhook
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Ticket Flow", version="1.0.1")
+app = FastAPI(title="Ticket Flow", version="2.0")
 
 app.add_middleware(
     CORSMiddleware,
