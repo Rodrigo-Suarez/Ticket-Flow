@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 
-def process_successful_payment(event_id: int, user_id: int, db: Session):
+async def process_successful_payment(event_id: int, user_id: int, db: Session):
     event = db.query(Event).filter(Event.event_id == event_id).first()
     print("#############################################")
     print(event)
@@ -31,6 +31,6 @@ def process_successful_payment(event_id: int, user_id: int, db: Session):
     db.commit()
     db.refresh(new_ticket) #Sincroniza la informacion entre la API y la Base de Datos
     
-    response = send_ticket(new_ticket.ticket_id, db, user)
-    return response
+    await send_ticket(new_ticket.ticket_id, db, user)
+    
 

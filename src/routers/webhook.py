@@ -58,7 +58,7 @@ async def mercadopago_webhook(request: Request, db: Session = Depends(get_db)):
             # Validar el estado del pago
             if payment_status == "approved":
                 # Procesar el pago exitoso
-                process_successful_payment(event_id, user_id, db)
+                await process_successful_payment(event_id, user_id, db)
 
             elif payment_status in ["pending", "in_process"]:
                 # Aquí no se realiza ninguna lógica, solo un mensaje de confirmación
