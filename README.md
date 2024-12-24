@@ -1,60 +1,57 @@
-# Ticket-Flow
-### **Objetivo**
+Ticket Flow 🎟️
+Ticket Flow es una aplicación backend diseñada para la gestión eficiente de eventos y tickets digitales. Este proyecto implementa un sistema robusto y seguro para la compra, validación y administración de entradas, integrando tecnologías modernas y buenas prácticas de desarrollo.
 
-Crear un sistema backend que permita a los usuarios gestionar eventos y generar entradas digitales con códigos QR que puedan ser validados en la entrada del evento.
+🚀 Funcionalidades principales
+🔐 Registro de usuarios: Gestión segura de datos con autenticación basada en JWT.
+🎫 Compra de tickets: Generación automática de tickets con códigos QR únicos y sistema de pagos integrado mediante Mercado Pago.
+📅 Gestión de eventos: Endpoints RESTful para crear, modificar y eliminar eventos.
+✅ Validación de tickets: Verificación en tiempo real para controlar el acceso a eventos.
+🛡️ Buenas prácticas de desarrollo: Validación de datos, uso adecuado de status codes HTTP y medidas de seguridad como encriptación de contraseñas.
+💾 Base de datos relacional: Diseño e integración con MySQL para garantizar la integridad y consistencia de los datos.
+🛠️ Tecnologías utilizadas
+Lenguaje y Framework:
+🐍 Python
+FastAPI (desarrollo rápido y escalable de APIs RESTful)
+Base de datos:
+MySQL (modelado y persistencia de datos relacionales)
+SQLAlchemy (ORM para interacción con la base de datos)
+Autenticación:
+JWT (tokens para sesiones seguras)
+Documentación y pruebas:
+Swagger (para probar y documentar la API)
+Pagos integrados:
+Mercado Pago (procesamiento seguro de pagos).
 
----
+🚦 Cómo ejecutar el proyecto
+Clona este repositorio:
 
-### **Especificaciones Técnicas**
+bash
+Copiar código
+git clone https://github.com/tu-usuario/ticket-flow.git
+cd ticket-flow
+Configura el entorno virtual y las dependencias:
 
----
+bash
+Copiar código
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+pip install -r requirements.txt
+Configura el archivo .env:
 
-### **1. Funcionalidades Principales**
+Crea un archivo .env en la raíz del proyecto con las siguientes variables:
+php
+Copiar código
+DATABASE_URL=mysql+pymysql://<usuario>:<contraseña>@<host>:<puerto>/<nombre_base_datos>
+MERCADOPAGO_ACCESS_TOKEN=<tu_token_de_acceso>
+Ejecuta el servidor FastAPI:
 
-1. **Gestión de Usuarios**:
-    - Registro e inicio de sesión de usuarios (administradores y asistentes).
-    - Roles: administrador (creador de eventos) y asistente (comprador de entradas).
-2. **Gestión de Eventos**:
-    - CRUD de eventos por los administradores.
-    - Atributos del evento: título, descripción, lugar, fecha y hora, número de entradas disponibles.
-3. **Compra de Entradas**:
-    - Registro de entradas compradas por asistentes.
-    - Generación automática de códigos QR únicos para cada entrada.
-    - Visualización del historial de entradas compradas.
-4. **Validación de Entradas**:
-    - Endpoint para validar el QR en la entrada del evento.
-    - Estado de la entrada: activa, usada o inválida.
+bash
+Copiar código
+uvicorn app.main:app --reload
+Prueba la API en Swagger:
 
----
+Visita http://localhost:8000/docs para acceder a la documentación generada automáticamente.
+📜 Licencia
+Este proyecto se distribuye bajo la licencia MIT.
 
-### **2. Estructura de Datos**
-
-1. **Base de Datos**:
-    - **Usuarios**: ID, nombre, correo, contraseña (hash), rol.
-    - **Eventos**: ID, título, descripción, lugar, fecha, hora, entradas disponibles, administrador_ID.
-    - **Entradas**: ID, usuario_ID, evento_ID, código_QR, estado (activa/usada).
-2. **Endpoints**:
-    - `/register` y `/login` - Registro e inicio de sesión.
-    - `/events` (GET, POST, PUT, DELETE) - Gestión de eventos.
-    - `/events/{id}/tickets` (POST) - Compra de entradas.
-    - `/tickets/{qr_code}/validate` (POST) - Validación de entrada.
-
----
-
-### **Tecnologías**
-
-- **Lenguaje**: Python.
-- **Framework Backend**: FastAPI.
-- **Base de Datos**: MySQL.
-- **Generación de Códigos QR**: Biblioteca `qrcode`.
-- **Autenticación**: JWT (JSON Web Tokens) para proteger los endpoints.
-- **Servidor de Despliegue**: Heroku, Render o AWS.
-- **Documentación de API**: Swagger o FastAPI Docs.
-
----
-
-### **Extras Opcionales**
-
-- **Notificaciones**: Correo electrónico al usuario con la entrada y el código QR.
-- **Panel de Administración**: Dashboard para listar eventos y estadísticas (por ejemplo, entradas vendidas por evento).
-- **Integración de Pagos**: Uso de Stripe o PayPal para simular compras reales.
+💡 Nota: Personaliza las secciones y variables del archivo .env según tu configuración específica. Si necesitas instrucciones adicionales o encuentras un problema, no dudes en abrir un issue.
