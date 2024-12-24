@@ -26,7 +26,8 @@
 - **Pagos integrados:**  
   - Mercado Pago (procesamiento seguro de pagos).  
 
-
+## 🛠️ Prueba la API
+  - https://ticket-flow-s9wk.onrender.com/docs
 
 ## 🚦 Cómo ejecutar el proyecto
 
