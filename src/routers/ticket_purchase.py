@@ -18,7 +18,7 @@ async def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResp
     if event.avaiable_tickets == 0:
         raise HTTPException(status_code=400, detail="No quedan entradas disponibles para el evento")
     if event.price == 0:
-        return process_successful_payment(event.event_id, user.user_id, db)
+        return await process_successful_payment(event.event_id, user.user_id, db)
     
     payment = PaymentRequest(
         amount=event.price,
