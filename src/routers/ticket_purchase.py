@@ -50,7 +50,7 @@ async def purchase_ticket(id: int, db: Session = Depends(get_db), user: UserResp
 
             "auto_return": "approved",
             "external_reference": f"{event.event_id}|{user.user_id}",
-            "notification_url": "https://tu-dominio.com/webhook/mercadopago"
+            "notification_url": "https://ticket-flow-s9wk.onrender.com/webhook/mercadopago"
         }
 
         preference_response = sdk.preference().create(preference_data)

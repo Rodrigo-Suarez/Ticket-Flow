@@ -10,7 +10,7 @@ from src.config import conf
 
 fm = FastMail(conf)
 
-async def send_ticket(id: int, db:Session, user: UserResponse):
+async def send_ticket(id: int, db:Session, user):
     ticket = get_ticket(id, user, db)
     qr_upload_file = get_qr_upload_file(ticket.qr_code)
 

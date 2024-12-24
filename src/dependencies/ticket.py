@@ -31,7 +31,7 @@ def get_tickets(user: UserResponse, db: Session):
     return tickets_list
 
 
-def get_ticket(id: int, user: UserResponse, db: Session):
+def get_ticket(id: int, user, db: Session):
     print(id)
     ticket = db.query(Ticket).filter(Ticket.ticket_id == id).first()
     if not ticket:
